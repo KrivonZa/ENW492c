@@ -1,0 +1,32 @@
+name: Create .env from GitHub Secrets
+
+on:
+  push:
+    branches:
+      - main # Hoặc thay bằng tên nhánh bạn muốn hành động này chạy (ví dụ: master)
+  pull_request:
+    branches:
+      - main # Hoặc thay bằng tên nhánh bạn muốn hành động này chạy
+
+jobs:
+  create-env:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create .env file from Secrets
+        run: |
+          echo "API_KEY=${{ COCAICONCAC }}" > .env
+          echo "DB_PASSWORD=${{ lonmamay }}" >> .env
+          # Bạn có thể thêm nhiều biến môi trường nữa vào đây nếu cần
+
+      - name: Commit .env file to repository (Optional)
+        run: |
+          git config --global user.name "Your Name"
+          git config --global user.email "your-email@example.com"
+          git add .env
+          git commit -m "Create .env file from GitHub Secrets"
+          git push
+        # Lưu ý: Thường không cần commit .env trở lại repo nếu bạn đã thêm .env vào .gitignore

@@ -18,8 +18,8 @@ jobs:
 
       - name: Create .env file from Secrets
         run: |
-          echo "API_KEY=${{ COCAICONCAC }}" > .env
-          echo "DB_PASSWORD=${{ lonmamay }}" >> .env
+          echo "API_KEY=${{ secrets.API_KEY }}" > .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
           # Bạn có thể thêm nhiều biến môi trường nữa vào đây nếu cần
 
       - name: Commit .env file to repository (Optional)

@@ -1,24 +1,24 @@
 #!/bin/bash
 
-# Kiểm tra nếu các biến môi trường đã được thiết lập
+# Kiểm tra xem biến môi trường có tồn tại không
 if [ -z "$DB_PASSWORD" ]; then
-  echo "DB_PASSWORD is missing! Please set it as an environment variable."
+  echo "DB_PASSWORD is missing! Please set it as an environment variable or GitHub Secrets."
   exit 1
 fi
 
 if [ -z "$DB_HOST" ]; then
-  echo "DB_HOST is missing! Please set it as an environment variable."
+  echo "DB_HOST is missing! Please set it as an environment variable or GitHub Secrets."
   exit 1
 fi
 
 if [ -z "$DB_NAME" ]; then
-  echo "DB_NAME is missing! Please set it as an environment variable."
+  echo "DB_NAME is missing! Please set it as an environment variable or GitHub Secrets."
   exit 1
 fi
 
 # Tạo URL PostgreSQL từ các giá trị đã nhập
 DB_USER="postgres"
-DB_PORT="5432"  # Sử dụng cổng mặc định của PostgreSQL
+DB_PORT="5432"  # Cổng mặc định của PostgreSQL
 
 DATABASE_POSTGRES_URL="postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
 

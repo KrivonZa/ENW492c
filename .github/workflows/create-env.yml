@@ -24,18 +24,13 @@ jobs:
           done
           echo "All required secrets are available!"
 
-      - name: Create .env file from GitHub Secrets
+      - name: Set environment variables for setup.sh
         run: |
-          DB_USER="postgres"
-          DB_HOST="${{ secrets.DB_HOST }}"
-          DB_NAME="${{ secrets.DB_NAME }}"
-          DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
-          DB_PORT="5432"
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> $GITHUB_ENV
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> $GITHUB_ENV
 
-          DATABASE_POSTGRES_URL="postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
-
-          # Tạo file .env
-          echo "DATABASE_POSTGRES_URL=$DATABASE_POSTGRES_URL" > .env
-
-      - name: Verify .env file
-        run: cat .env
+      - name: Run setup.sh to create .env file
+        run: |
+          chmod +x ./setup.sh
+          ./setup.sh

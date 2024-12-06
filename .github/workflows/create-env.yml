@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
 
 jobs:
   create-env:
@@ -20,7 +17,7 @@ jobs:
         run: |
           REQUIRED_SECRETS=("DB_PASSWORD" "DB_HOST" "DB_NAME")
           for SECRET in "${REQUIRED_SECRETS[@]}"; do
-            if [ -z "${{ secrets[SECRET] }}" ]; then
+            if [ -z "${{ secrets[$SECRET] }}" ]; then
               echo "$SECRET is missing!"
               exit 1
             fi
@@ -33,14 +30,12 @@ jobs:
           DB_HOST="${{ secrets.DB_HOST }}"
           DB_NAME="${{ secrets.DB_NAME }}"
           DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
-          DB_PORT="5432"  # Cổng mặc định của PostgreSQL
+          DB_PORT="5432"
 
-          # Tạo URL PostgreSQL
           DATABASE_POSTGRES_URL="postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
 
           # Tạo file .env
           echo "DATABASE_POSTGRES_URL=$DATABASE_POSTGRES_URL" > .env
-          echo ".env file has been created successfully!"
 
       - name: Verify .env file
         run: cat .env

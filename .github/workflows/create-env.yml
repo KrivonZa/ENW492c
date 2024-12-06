@@ -16,16 +16,40 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Ensure Secrets are available
+        run: |
+          if [ -z "${{ secrets.DB_PASSWORD }}" ]; then
+            echo "DB_PASSWORD is missing!"
+            exit 1  # Nếu không có DB_PASSWORD thì dừng lại
+          fi
+          if [ -z "${{ secrets.DB_HOST }}" ]; then
+            echo "DB_HOST is missing!"
+            exit 1  # Nếu không có DB_HOST thì dừng lại
+          fi
+          if [ -z "${{ secrets.DB_NAME }}" ]; then
+            echo "DB_NAME is missing!"
+            exit 1  # Nếu không có DB_NAME thì dừng lại
+          fi
+          echo "All required secrets are available!"
+
       - name: Create .env file from GitHub Secrets
         run: |
           DB_USER="postgres"
-          DB_HOST="${{ secrets.DB_HOST }}"  # Host của cơ sở dữ liệu
-          DB_NAME="${{ secrets.DB_NAME }}"  # Tên cơ sở dữ liệu
-          DB_PASSWORD="${{ secrets.DB_PASSWORD }}"  # Mật khẩu từ GitHub Secrets
-          DB_PORT="5432"  # Cổng PostgreSQL cứng (mặc định)
+          DB_HOST="${{ secrets.DB_HOST }}"
+          DB_NAME="${{ secrets.DB_NAME }}"
+          DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+          DB_PORT="5432"  # Cổng mặc định của PostgreSQL
 
-          # Tạo URL kết nối PostgreSQL với cổng cứng
+          # Tạo URL PostgreSQL
           DATABASE_POSTGRES_URL="postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
 
-          # Tạo file .env với URL kết nối
+          # Tạo file .env
           echo "DATABASE_POSTGRES_URL=$DATABASE_POSTGRES_URL" > .env
+
+      - name: Commit .env to Repository (Optional)
+        run: |
+          git config --global user.name "Your Name"
+          git config --global user.email "your-email@example.com"
+          git add .env
+          git commit -m "Add .env file from GitHub Secrets"
+          git push

@@ -48,8 +48,8 @@ jobs:
 
       - name: Commit .env to Repository (Optional)
         run: |
-          git config --global user.name "Your Name"
-          git config --global user.email "your-email@example.com"
+          git config --global user.name "KrivonZa"
+          git config --global user.email "kevintruong6587@gmail.com"
           git add .env
           git commit -m "Add .env file from GitHub Secrets"
           git push

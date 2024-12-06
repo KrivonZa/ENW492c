@@ -3,22 +3,29 @@ name: Create .env from GitHub Secrets
 on:
   push:
     branches:
-      - master  # Hoặc tên nhánh bạn muốn
+      - master
   pull_request:
     branches:
-      - master  # Hoặc tên nhánh bạn muốn
+      - master
 
 jobs:
   create-env:
-    runs-on: ubuntu-latest  # Chạy trên môi trường Ubuntu
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3  # Lấy mã nguồn từ repository
+        uses: actions/checkout@v3
 
-      - name: Create .env file from Secrets
+      - name: Create .env file from GitHub Secrets
         run: |
-          echo "API_KEY=${{ secrets.API_KEY }}" > .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-          # Thêm các biến môi trường khác nếu cần
+          DB_USER="postgres"
+          DB_HOST="${{ secrets.DB_HOST }}"  # Host của cơ sở dữ liệu
+          DB_NAME="${{ secrets.DB_NAME }}"  # Tên cơ sở dữ liệu
+          DB_PASSWORD="${{ secrets.DB_PASSWORD }}"  # Mật khẩu từ GitHub Secrets
+          DB_PORT="5432"  # Cổng PostgreSQL cứng (mặc định)
+
+          # Tạo URL kết nối PostgreSQL với cổng cứng
+          DATABASE_POSTGRES_URL="postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
+
+          # Tạo file .env với URL kết nối
+          echo "DATABASE_POSTGRES_URL=$DATABASE_POSTGRES_URL" > .env

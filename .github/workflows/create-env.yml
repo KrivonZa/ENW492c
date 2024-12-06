@@ -18,18 +18,13 @@ jobs:
 
       - name: Ensure Secrets are available
         run: |
-          if [ -z "${{ secrets.DB_PASSWORD }}" ]; then
-            echo "DB_PASSWORD is missing!"
-            exit 1  # Nếu không có DB_PASSWORD thì dừng lại
-          fi
-          if [ -z "${{ secrets.DB_HOST }}" ]; then
-            echo "DB_HOST is missing!"
-            exit 1  # Nếu không có DB_HOST thì dừng lại
-          fi
-          if [ -z "${{ secrets.DB_NAME }}" ]; then
-            echo "DB_NAME is missing!"
-            exit 1  # Nếu không có DB_NAME thì dừng lại
-          fi
+          REQUIRED_SECRETS=("DB_PASSWORD" "DB_HOST" "DB_NAME")
+          for SECRET in "${REQUIRED_SECRETS[@]}"; do
+            if [ -z "${{ secrets[SECRET] }}" ]; then
+              echo "$SECRET is missing!"
+              exit 1
+            fi
+          done
           echo "All required secrets are available!"
 
       - name: Create .env file from GitHub Secrets
@@ -45,3 +40,7 @@ jobs:
 
           # Tạo file .env
           echo "DATABASE_POSTGRES_URL=$DATABASE_POSTGRES_URL" > .env
+          echo ".env file has been created successfully!"
+
+      - name: Verify .env file
+        run: cat .env

@@ -1,21 +1,30 @@
 #!/bin/bash
 
-# Yêu cầu người dùng nhập các giá trị môi trường
-echo "Creating .env file..."
+# Kiểm tra sự tồn tại của các GitHub Secrets và tạo file .env
 
-echo "Enter your DB_PASSWORD:"
-read DB_PASSWORD
-echo "Enter your DB_HOST (e.g., moixemdoannay.site):"
-read DB_HOST
-echo "Enter your DB_NAME (e.g., concac_db):"
-read DB_NAME
+echo "Creating .env file from GitHub Secrets..."
 
-# Tạo URL PostgreSQL từ các giá trị đã nhập
+# Kiểm tra các biến môi trường (secrets)
+if [ -z "$DB_PASSWORD" ]; then
+  echo "DB_PASSWORD is missing!"
+  exit 1
+fi
+if [ -z "$DB_HOST" ]; then
+  echo "DB_HOST is missing!"
+  exit 1
+fi
+if [ -z "$DB_NAME" ]; then
+  echo "DB_NAME is missing!"
+  exit 1
+fi
+
+# Tạo URL PostgreSQL từ các secrets
 DB_USER="postgres"
-DB_PORT="5432"  # Sử dụng cổng mặc định của PostgreSQL
+DB_PORT="5432"  # Cổng mặc định của PostgreSQL
 
 DATABASE_POSTGRES_URL="postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
 
-echo "DATABASE_POSTGRES_URL=$DATABASE_POSTGRES_URL" >> .env
+# Ghi vào file .env (ghi đè nếu đã tồn tại)
+echo "DATABASE_POSTGRES_URL=$DATABASE_POSTGRES_URL" > .env
 
 echo ".env file has been created successfully!"

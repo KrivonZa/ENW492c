@@ -3,7 +3,7 @@ name: Create .env from GitHub Secrets
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   create-env:
